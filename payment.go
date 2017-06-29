@@ -57,6 +57,22 @@ func (p *paymentHandler) UpdateMember(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (p *paymentHandler) DeleteMember(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("MemberID")
+	if id == "" {
+		http.Error(w, "Empty MemberID", http.StatusBadRequest)
+		return
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	err := p.server.faker.Members.delete(id)
+	if err != nil {
+		http.Error(w, "MemberID not found", http.StatusBadRequest)
+		return
+	}
+}
+
 func (p *paymentHandler) list(w http.ResponseWriter, r *http.Request) {
 	lock.RLock()
 	defer lock.RUnlock()

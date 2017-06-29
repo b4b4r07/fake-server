@@ -32,3 +32,18 @@ func (ms *Members) update(m Member) error {
 	}
 	return nil
 }
+
+func (ms *Members) delete(id string) error {
+	ret := Members{}
+	_, err := ms.get(id)
+	if err != nil {
+		return err
+	}
+	for _, m := range *ms {
+		if m.ID != id {
+			ret = append(ret, m)
+		}
+	}
+	*ms = ret
+	return nil
+}
