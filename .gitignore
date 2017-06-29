@@ -1,0 +1,4 @@
+fake-server
+bin/*
+.DS_Store
+*~
