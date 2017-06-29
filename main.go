@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,13 +11,19 @@ import (
 	"time"
 )
 
+var (
+	port = flag.Int("port", 8000, "port number")
+)
+
 func main() {
+	flag.Parse()
+
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 
 	logger := log.New(os.Stdout, "", 0)
 	s := NewServer(func(s *Server) { s.logger = logger })
-	addr := ":8080"
+	addr := fmt.Sprintf(":%d", *port)
 	h := &http.Server{Addr: addr, Handler: s}
 
 	go func() {

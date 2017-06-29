@@ -11,10 +11,10 @@ type (
 		logger  *log.Logger
 		mux     *http.ServeMux
 		faker   *Faker
-		common  service
-		payment *paymentService
+		common  handler
+		payment *paymentHandler
 	}
-	service struct {
+	handler struct {
 		server *Server
 	}
 	Faker struct {
@@ -24,6 +24,10 @@ type (
 	Member  struct {
 		ID   string
 		Name string
+	}
+	Error struct {
+		Code string
+		Info string
 	}
 )
 
@@ -39,11 +43,11 @@ func NewServer(options ...func(*Server)) *Server {
 	}
 
 	s.common.server = s
-	s.payment = (*paymentService)(&s.common)
+	s.payment = (*paymentHandler)(&s.common)
 
 	s.mux.HandleFunc("/list", s.payment.list)
-	s.mux.HandleFunc("/save", s.payment.SaveMember)
-	// s.mux.HandleFunc("/payment/SaveMember.idPass", s.paymentSaveMember)
+	s.mux.HandleFunc("/payment/SaveMember.idPass", s.payment.SaveMember)
+	s.mux.HandleFunc("/payment/UpdateMember.idPass", s.payment.UpdateMember)
 
 	return s
 }

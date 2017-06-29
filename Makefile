@@ -1,4 +1,6 @@
+all: run
+
 run:
 	go build
-	./fake-server
+	./fake-server -port=8080
 	git clean -fd

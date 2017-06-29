@@ -6,15 +6,11 @@ import (
 	"sync"
 )
 
-type (
-	paymentService service
-)
+type paymentHandler handler
 
-var (
-	lock sync.RWMutex
-)
+var lock sync.RWMutex
 
-func (p *paymentService) SaveMember(w http.ResponseWriter, r *http.Request) {
+func (p *paymentHandler) SaveMember(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("MemberID")
 	if id == "" {
 		http.Error(w, "Empty MemberID", http.StatusBadRequest)
@@ -37,7 +33,31 @@ func (p *paymentService) SaveMember(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *paymentService) list(w http.ResponseWriter, r *http.Request) {
+func (p *paymentHandler) UpdateMember(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("MemberID")
+	if id == "" {
+		http.Error(w, "Empty MemberID", http.StatusBadRequest)
+		return
+	}
+	name := r.FormValue("MemberName")
+	if name == "" {
+		http.Error(w, "Empty MemberName", http.StatusBadRequest)
+		return
+	}
+
+	lock.Lock()
+	defer lock.Unlock()
+	err := p.server.faker.Members.update(Member{
+		ID:   id,
+		Name: name,
+	})
+	if err != nil {
+		http.Error(w, "MemberID not found", http.StatusBadRequest)
+		return
+	}
+}
+
+func (p *paymentHandler) list(w http.ResponseWriter, r *http.Request) {
 	lock.RLock()
 	defer lock.RUnlock()
 	for _, member := range p.server.faker.Members {

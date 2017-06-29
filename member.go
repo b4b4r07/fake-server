@@ -21,14 +21,14 @@ func (ms *Members) add(m Member) error {
 }
 
 func (ms *Members) update(m Member) error {
-	if _, err := ms.get(m.ID); err != nil {
+	_, err := ms.get(m.ID)
+	if err != nil {
 		return err
 	}
-	for _, member := range *ms {
+	for i, member := range *ms {
 		if member.ID == m.ID {
-			member.Name = m.Name
-			return nil
+			(*ms)[i].Name = m.Name
 		}
 	}
-	return errors.New("can't update")
+	return nil
 }
