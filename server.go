@@ -49,6 +49,7 @@ func NewServer(options ...func(*Server)) *Server {
 	s.mux.HandleFunc("/payment/SaveMember.idPass", s.payment.SaveMember)
 	s.mux.HandleFunc("/payment/UpdateMember.idPass", s.payment.UpdateMember)
 	s.mux.HandleFunc("/payment/DeleteMember.idPass", s.payment.DeleteMember)
+	s.mux.HandleFunc("/payment/SearchMember.idPass", s.payment.SearchMember)
 
 	return s
 }

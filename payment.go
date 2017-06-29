@@ -44,7 +44,6 @@ func (p *paymentHandler) UpdateMember(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Empty MemberName", http.StatusBadRequest)
 		return
 	}
-
 	lock.Lock()
 	defer lock.Unlock()
 	err := p.server.faker.Members.update(Member{
@@ -63,7 +62,6 @@ func (p *paymentHandler) DeleteMember(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Empty MemberID", http.StatusBadRequest)
 		return
 	}
-
 	lock.Lock()
 	defer lock.Unlock()
 	err := p.server.faker.Members.delete(id)
@@ -71,6 +69,22 @@ func (p *paymentHandler) DeleteMember(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "MemberID not found", http.StatusBadRequest)
 		return
 	}
+}
+
+func (p *paymentHandler) SearchMember(w http.ResponseWriter, r *http.Request) {
+	id := r.FormValue("MemberID")
+	if id == "" {
+		http.Error(w, "Empty MemberID", http.StatusBadRequest)
+		return
+	}
+	lock.RLock()
+	defer lock.RUnlock()
+	m, err := p.server.faker.Members.get(id)
+	if err != nil {
+		http.Error(w, "MemberID not found", http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "%#v\n", m)
 }
 
 func (p *paymentHandler) list(w http.ResponseWriter, r *http.Request) {
